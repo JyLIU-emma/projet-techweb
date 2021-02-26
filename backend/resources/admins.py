@@ -41,18 +41,37 @@ users = {
 class Login(Resource):
     def get(self, userid):
         test1()
-        return {userid:users[userid]}
+        return {userid:users[userid], 'nom': username, 'mot de passe': password}
     
-    def post(self, userid):
+    def post(self):
         """
+        first:
         http://127.0.0.1:5000/admins/login/002?field=fonction
 
         {
             "002": "Chef service matériel informatique"
         }
+
+        second:
+        http://127.0.0.1:5000/admins/login
+        postman: body form-data 输入信息
         """
-        searchfield = request.args['field']  # searchfield 是我们想查询的字典里的键
-        return {userid:users[userid][searchfield]}
+        #first:
+        # searchfield = request.args['field']  # searchfield 是我们想查询的字典里的键
+        # return {userid:users[userid][searchfield]}
+
+
+        #second：
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        for user in users:
+            if username == users[user]['nom']:
+                msg = f"welcome, {username}"
+                return {'message': msg, 'userinfo':users[user]}
+            return "Hello stranger"
+
+
 
 class CreateAdmin(Resource):
     def get(self):

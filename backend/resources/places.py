@@ -33,11 +33,15 @@ class AddPlace(Resource):
 class SearchPlaces(Resource):
     def get(self):
         city = request.args['city']
+
+##########   SQL部分   ##############################
         for item in geonames:
             print(item)
             if geonames[item]['name'] == city:
                 city_info = geonames[item]
                 break
+##########################################
+
         return {'the city in search':city, 'its info':city_info}
     
     def post(self):
