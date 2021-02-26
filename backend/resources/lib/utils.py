@@ -1,9 +1,11 @@
 
-__all__ = ["test1", "test1_b"]
+__all__ = ["test1", "test1_b", "test3"]
 
 def test1():
-    print("this is test1 in utils.py")
+    print("Print all the users in the browser")
 
 def test1_b():
     print("this is test1_b in utils.py")
+
+
 

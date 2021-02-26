@@ -8,7 +8,7 @@ api = Api(app)
 
 
 api.add_resource(Home, '/', '/home')
-api.add_resource(Login, '/admins/login')  #se connecter GET POST
+api.add_resource(Login, '/admins/login', '/admins/login/<userid>')  #se connecter GET POST
 api.add_resource(CreateAdmin, '/admins/create')  #s'inscrire GET POST
 # api.add_resource(CreateAdmin, '/admins/<userid>') # GET choose search/add 
 # api.add_resource(GestionDb, '/geonames/') # GET choose search/add   POST 
