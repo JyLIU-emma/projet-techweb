@@ -1,5 +1,5 @@
 
-__all__ = ["test1", "test1_b", "test3"]
+__all__ = ["test1", "test1_b"]
 
 def test1():
     print("Print all the users in the browser")

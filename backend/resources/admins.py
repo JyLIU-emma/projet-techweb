@@ -42,6 +42,17 @@ class Login(Resource):
     def get(self, userid):
         test1()
         return {userid:users[userid]}
+    
+    def post(self, userid):
+        """
+        http://127.0.0.1:5000/admins/login/002?field=fonction
+
+        {
+            "002": "Chef service matériel informatique"
+        }
+        """
+        searchfield = request.args['field']  # searchfield 是我们想查询的字典里的键
+        return {userid:users[userid][searchfield]}
 
 class CreateAdmin(Resource):
     def get(self):
