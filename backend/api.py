@@ -1,9 +1,10 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, flash, session
 from flask_restful import Resource, Api
 
 from resources import *
 
 app = Flask(__name__)
+app.secret_key = '23rfqs'   ################# random string
 api = Api(app)
 
 

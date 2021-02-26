@@ -1,4 +1,4 @@
-from flask import Flask, request, flash, url_for, redirect, render_template, session
+from flask import Flask, request, flash, url_for, redirect, render_template, session, flash
 import json
 import os
 from flask_restful import Resource, Api
@@ -37,16 +37,28 @@ class Login(Resource):
 
 
         #second：
-        
+
         username = request.form.get('username')
         password = request.form.get('password')
 
-        for user in users:
-            if username == users[user]['nom']:
-                msg = f"welcome, {username}"
-                return {'message': msg, 'userinfo':users[user]}
+        session['name'] = username
+        session['password'] = password
 
-        return "Hello stranger"
+        print(session['name'])
+        print(session['password'])
+
+        if not all([username, password]):
+            msg = "Rempliez tous les champs, s'il vous plaît!"
+            return {'message' : msg}
+        else:
+            for user in users:
+                if username == users[user]['nom'] and password == users[user]['id']:
+                    msg = f"welcome, {username}"
+                    return {'message': msg, 'userinfo':users[user]}
+                elif username == users[user]['nom'] and password != users[user]['id']:
+                    msg = f"Le mot de passe n'est pas correct"
+                    return {'message': msg}
+            return "Hello stranger"
 
 
 

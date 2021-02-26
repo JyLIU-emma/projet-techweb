@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, session
 from flask_restful import Resource, Api
 
 # from .lib.utils import *
@@ -34,9 +34,12 @@ class SearchPlaces(Resource):
     def get(self):
         city = request.args['city']
 
+        print(session['name'])   ############################
+        print(session['password'])  #############################
+
 ##########   SQL部分   ##############################
         for item in geonames:
-            print(item)
+            print(item)   #########################
             if geonames[item]['name'] == city:
                 city_info = geonames[item]
                 break
