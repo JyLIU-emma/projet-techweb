@@ -32,7 +32,8 @@ class AddPlace(Resource):
 ##############################################
 class SearchPlaces(Resource):
     def get(self):
-        city = request.args['city']
+        # city = request.args['city']
+        city = request.args.get('city')
 
         print(session['name'])   ############################
         print(session['password'])  #############################

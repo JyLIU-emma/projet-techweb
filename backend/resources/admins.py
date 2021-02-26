@@ -12,6 +12,7 @@ false = False
 true = True
 
 users = load_data('users')
+admins = load_data('admins')
 
 class Login(Resource):
     def get(self, userid):
@@ -67,4 +68,32 @@ class CreateAdmin(Resource):
         return "formulaire d'inscrire admin template"
     
     def post(self):
-        return "redirect to gestionDb if success"
+        username = request.form.get('username')
+        print(username)
+        userid = request.form.get('id')
+        print(userid)
+        password = request.form.get('password')
+        password2 = request.form.get('passwordconfirm')
+
+        if userid not in users.keys():
+            msg = "Désolée, vous n'êtes pas notre collaborateur, vous ne pouvez pas créer un compte."
+        elif userid in admins.keys():
+            msg = "Vous avez déjà un compte."
+        elif not all([username, userid, password, password2]):
+            msg = "Veuillez remplir tous les champs."
+        elif username != users[userid]["nom"] :
+            msg = "Votre id ne conforme pas à votre nom. "
+        elif password != password2 :
+            msg = "Les deux mots de passe remplis doivent être identiques."
+        else:
+            admins[userid] = {
+                    'id': userid,
+                    'nom': username,
+                    'mot de passe': password
+                    }
+            msg = "Votre compte admin a bien été créé."
+        
+        print(admins)
+        dict_to_json(admins, "admins")
+
+        return {"massage" : msg}
