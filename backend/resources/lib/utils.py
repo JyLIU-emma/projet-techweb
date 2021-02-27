@@ -61,27 +61,27 @@ class fr(db.Model):
     timezone = db.Column(db.String)
     modification_date = db.Column(db.String)
 
-    # def __init__(self, geonameid, name, asciiname, alternatenames, latitude, longitude, feature_class, feature_code, country_code, cc2, admin1_code, admin2_code, admin3_code, admin4_code, population, elevation, dem,
-    # timezone, modification_date):
-    #     self.geonameid = geonameid
-    #     self.name = name
-    #     self.asciiname = asciiname
-    #     self.alternatenames = alternatenames
-    #     self.latitude = latitude
-    #     self.longitude = longitude
-    #     self.feature_class = feature_class
-    #     self.feature_code = feature_code
-    #     self.country_code = country_code
-    #     self.cc2 = cc2
-    #     self.admin1_code = admin1_code
-    #     self.admin2_code = admin2_code
-    #     self.admin3_code = admin3_code
-    #     self.admin4_code = admin4_code
-    #     self.population = population
-    #     self.elevation = elevation
-    #     self.dem = dem
-    #     self.timezone = timezone
-    #     self.modification_date = modification_date
+    def __init__(self, geonameid, name, asciiname, alternatenames, latitude, longitude, feature_class, feature_code, country_code, cc2, admin1_code, admin2_code, admin3_code, admin4_code, population, elevation, dem,
+    timezone, modification_date):
+        self.geonameid = geonameid
+        self.name = name
+        self.asciiname = asciiname
+        self.alternatenames = alternatenames
+        self.latitude = latitude
+        self.longitude = longitude
+        self.feature_class = feature_class
+        self.feature_code = feature_code
+        self.country_code = country_code
+        self.cc2 = cc2
+        self.admin1_code = admin1_code
+        self.admin2_code = admin2_code
+        self.admin3_code = admin3_code
+        self.admin4_code = admin4_code
+        self.population = population
+        self.elevation = elevation
+        self.dem = dem
+        self.timezone = timezone
+        self.modification_date = modification_date
 
 def main():
     filepath = DATA / f"try4.json"
