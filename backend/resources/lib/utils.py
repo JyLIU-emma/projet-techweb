@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from pathlib import Path
 import json
 
-__all__ = ["load_data", "dict_to_json", 'give_db_path', 'fr', 'db']
+__all__ = ["load_data", "dict_to_json", 'fr', 'db', 'DB_DATA']
 
 # Créer des chemins vers les bases de données
 BACKEND = Path(__file__).parent.parent.parent
@@ -13,9 +13,6 @@ ADMINS_DATA = DATA / "admins.json"
 DB_DATA = DATA / "locations.db"
 
 db = SQLAlchemy()
-
-def give_db_path():
-    return DB_DATA
 
 def load_data(tablename):
     if tablename == "users":
@@ -84,7 +81,7 @@ class fr(db.Model):
         self.modification_date = modification_date
 
 def main():
-    filepath = DATA / f"try4.json"
+    filepath = DATA / f"admins.json"
     with filepath.open() as f:
         data_dico = json.load(f)
     data_dico['006'] = {
@@ -92,7 +89,7 @@ def main():
                     'nom': 'test',
                     'mot de passe': 'test'
                     } 
-    dict_to_json(data_dico, 'try4')
+    dict_to_json(data_dico, 'try')
 
 if __name__ == "__main__":
     main()

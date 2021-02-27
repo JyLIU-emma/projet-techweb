@@ -9,10 +9,11 @@ from resources import *
 app = Flask(__name__)
 app.secret_key = '23rfqs'   ################# random string
 
-dbpath = str(give_db_path())
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + dbpath
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + str(DB_DATA)
 app.config['SECRET_KEY'] = "random_string"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+app.config['JSON_AS_ASCII'] = False
+app.config['JSON_SORT_KEYS'] = False
 
 db.init_app(app)
 api = Api(app)

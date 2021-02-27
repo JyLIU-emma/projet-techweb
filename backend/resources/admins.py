@@ -1,4 +1,4 @@
-from flask import Flask, request, flash, url_for, redirect, render_template, session, flash
+from flask import Flask, request, flash, url_for, redirect, render_template, session, flash, jsonify
 import json
 import os
 from flask_restful import Resource, Api
@@ -16,8 +16,7 @@ admins = load_data('admins')
 
 class Login(Resource):
     def get(self, userid):
-        test1()
-        return {userid:users[userid], 'nom': username, 'mot de passe': password}
+        return jsonify({userid:users[userid], 'nom': username, 'mot de passe': password})
     
     def post(self):
         """
@@ -55,11 +54,11 @@ class Login(Resource):
             for user in users:
                 if username == users[user]['nom'] and password == users[user]['id']:
                     msg = f"welcome, {username}"
-                    return {'message': msg, 'userinfo':users[user]}
+                    return jsonify({'message': msg, 'userinfo':users[user]})
                 elif username == users[user]['nom'] and password != users[user]['id']:
                     msg = "Le mot de passe n'est pas correct"
-                    return {'message': msg}
-            return "Hello stranger"
+                    return jsonify({'message': msg})
+            return jsonify({'message' : "Hello stranger"})
 
 
 
@@ -94,6 +93,6 @@ class CreateAdmin(Resource):
             msg = "Votre compte admin a bien été créé."
         
         # print(admins)
-        dict_to_json(admins, "admins")
+        # dict_to_json(admins, "admins")
 
-        return {"massage" : msg}
+        return jsonify({"massage" : msg})

@@ -1,20 +1,20 @@
-from flask import Flask, request, render_template, session, redirect, url_for
+from flask import Flask, request, jsonify
 from flask_restful import Resource, Api
 import json
-from flask import jsonify
 from .lib.utils import *
 
 __all__ =['AddPlace', 'SearchPlaces', 'PlaceInfoPage']
 
+
+# lister tous les infos à recueillir
+info_list = ['geonameid', 'name', 'asciiname', 'alternatenames', 'latitude', 'longitude', 'feature_class', 'feature_code', \
+            'country_code', 'cc2', 'admin1_code', 'admin2_code', 'admin3_code', 'admin4_code', 'population', 'elevation', 'dem', 'timezone', 'modification_date']
+
 class AddPlace(Resource):
     def get(self):
-        return {'infolist':['geonameid', 'name', 'asciiname', 'alternatenames', \
-            'latitude', 'longitude', 'feature class', 'feature code', 'country code', 'cc2', \
-            'admin1 code', 'admin2 code', 'admin3 code', 'admin4 code', 'population', \
-            'elevation','dem','timezone','modification date' ]}
+        return jsonify({'infolist':info_list})
 
     def post(self):
-        #########################有没有简化的方法
         geonameid = request.form.get('geonameid')
         name = request.form.get('name')
         asciiname = request.form.get('asciiname') 
@@ -34,30 +34,25 @@ class AddPlace(Resource):
         dem = request.form.get('dem')
         timezone = request.form.get('timezone')
         modification_date = request.form.get('modification_date')
+
+        info = [geonameid, name, asciiname, alternatenames, latitude, \
+            longitude, feature_class, feature_code, country_code, cc2, admin1_code, admin2_code, \
+                admin3_code, admin4_code, population, elevation, dem, timezone, modification_date]
             
-        if not all([geonameid, name, asciiname, alternatenames, latitude, \
-            longitude, feature_class, feature_code, country_code, cc2, admin1_code, admin2_code, \
-                admin3_code, admin4_code, population, elevation, dem, timezone, modification_date]):
-            msg = "****Veuillez ****"
-            return msg
+        if not all(info):
+            msg = "****Veuillez remplir tous les champs. ****"
+            return jsonify({"message":msg})
         else :
-            location = fr(geonameid, name, asciiname, alternatenames, latitude, \
-            longitude, feature_class, feature_code, country_code, cc2, admin1_code, admin2_code, \
-                admin3_code, admin4_code, population, elevation, dem, timezone, modification_date)
+            location = fr(*info)
             db.session.add(location)
             db.session.commit()
-            msg = u'****{}({}) est bien ajoutée dans la base de données.****'.format(name, geonameid) ###########################怎么加入
-            # return redirect(url_for('SearchPlaces'))
-            return msg
+            msg = '****{}({}) est bien ajoutée dans la base de données.****'.format(name, geonameid)
+            return {"message":msg}, 201
         
 
 class SearchPlaces(Resource):
     def get(self):
-        ############### 这里页面跳转有问题，不知道是否还要考虑这个实现，以及如何实现
         city = request.args.get('name')
-        # geoid = request.args.get('geonameid')
-        # if geoid == None:
-
         if city is None:
             results = fr.query.all()
         else:
@@ -70,52 +65,86 @@ class SearchPlaces(Resource):
                 'latitude' : location.latitude,
                 'longitude' : location.longitude
             }
-        print(len(results_dico.keys()))
-        return results_dico
-        # else:
-        #     return redirect(url_for('PlaceInfoPage', geonameid = geoid)
+        return jsonify(results_dico)
 
 class PlaceInfoPage(Resource):
     def get(self, geonameid):
         geonameid = str(geonameid)
-        results = fr.query.filter(fr.geonameid == geonameid if geonameid is not None else "").all()
-        for location in results:
-            cityinfo = {
-                "Geoname ID" : location.geonameid,
-                "Name" : location.name,
-                "Ascii Name" : location.asciiname,
-                "Alternate Names" : location.alternatenames,
-                "Latitude" : location.latitude,
-                "Longitude" : location.longitude,
-                "Feature class" : location.feature_class,
-                "Feature code" : location.feature_code,
-                "Country code" : location.country_code,
-                "CC2" : location.cc2,
-                "Admin1 code" : location.admin1_code,
-                "Admin2 code" : location.admin2_code,
-                "Admin3 code" : location.admin3_code,
-                "Admin4 code" : location.admin4_code,
-                "Population" : location.population,
-                "Elevation" : location.elevation,
-                "Dem" : location.dem,
-                "Timezone" : location.timezone,
-                "Modification date" : location.modification_date,
-            }
-        return { geonameid : cityinfo }
+        location = fr.query.filter(fr.geonameid == geonameid).first()
+        if not location:
+            msg = f"La base de données n'a pas l'info de cette location ({geonameid})"
+            return {"message":msg}, 404
+        cityinfo = {
+            "Geoname ID" : location.geonameid,
+            "Name" : location.name,
+            "Ascii Name" : location.asciiname,
+            "Alternate Names" : location.alternatenames,
+            "Latitude" : location.latitude,
+            "Longitude" : location.longitude,
+            "Feature class" : location.feature_class,
+            "Feature code" : location.feature_code,
+            "Country code" : location.country_code,
+            "CC2" : location.cc2,
+            "Admin1 code" : location.admin1_code,
+            "Admin2 code" : location.admin2_code,
+            "Admin3 code" : location.admin3_code,
+            "Admin4 code" : location.admin4_code,
+            "Population" : location.population,
+            "Elevation" : location.elevation,
+            "Dem" : location.dem,
+            "Timezone" : location.timezone,
+            "Modification date" : location.modification_date,
+        }
+        return jsonify({ geonameid : cityinfo })
 
     def put(self, geonameid):
-        data = request.get_json()
-        print(data)
-        # data = json.loads(data)
-        return jsonify(data)
+        user_info = []
+        db_info = []
+        
+        # les informations après changement de l'user
+        for item in info_list:
+            user_info.append(request.form.get(item))
+
+        # les informations originales de db
+        geonameid = str(geonameid)
+        result = fr.query.filter(fr.geonameid == geonameid).first()
+        if not result:
+            msg = "La base de données n'a pas l'info de cette location ({})".format(geonameid)
+            return {"message":msg}, 404
+
+        for i in info_list:
+            field_info = eval(f'result.{i}')
+            db_info.append(field_info)
+
+        for i in range(len(info_list)):
+            if i == 0:
+                if user_info[i] != db_info[i]:
+                    msg = u"Désolé, le geonameid ne peut pas être changé."
+                    return jsonify({"message":msg})
+            else:
+                if user_info[i] != db_info[i]:
+                    db_info[i] = user_info[i]
+        
+        location_new_version = fr(*db_info)
+
+        db.session.delete(result)
+        db.session.add(location_new_version)
+        db.session.commit()
+        
+        msg = '****Les informations de {}({}) est bien modifiées.****'.format(user_info[1], geonameid)
+        return jsonify({"message":msg})
+
 
     def delete(self, geonameid):
         geonameid = str(geonameid)
-        results = fr.query.filter(fr.geonameid == geonameid if geonameid is not None else "").all()
-        for city in results:
-            cityname = city.name
-            db.session.delete(city)
+        result = fr.query.filter(fr.geonameid == geonameid).first()
+        if not result:
+            msg = "La base de données n'a pas l'info de cette location ({})".format(geonameid)
+            return {"message":msg}, 404
+        cityname = result.name
+        db.session.delete(result)
         db.session.commit()
-        msg = u'****{}({}) est supprimée.****'.format(cityname, geonameid)
-        # return redirect(url_for('SearchPlaces'))
-        return msg
+        msg = '****{}({}) est supprimée.****'.format(cityname, geonameid)
+        return jsonify({"message":msg})
+        
+        
