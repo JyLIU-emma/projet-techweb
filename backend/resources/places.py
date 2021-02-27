@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template, session, redirect, url_for
 from flask_restful import Resource, Api
-
+import json
+from flask import jsonify
 from .lib.utils import *
 
 __all__ =['AddPlace', 'SearchPlaces', 'PlaceInfoPage']
@@ -102,8 +103,11 @@ class PlaceInfoPage(Resource):
             }
         return { geonameid : cityinfo }
 
-    def put(self):
-        return "update the info"
+    def put(self, geonameid):
+        data = request.get_json()
+        print(data)
+        # data = json.loads(data)
+        return jsonify(data)
 
     def delete(self, geonameid):
         geonameid = str(geonameid)
