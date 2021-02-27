@@ -45,8 +45,8 @@ class Login(Resource):
         session['name'] = username
         session['password'] = password
 
-        print(session['name'])
-        print(session['password'])
+        # print(session['name'])
+        # print(session['password'])
 
         if not all([username, password]):
             msg = "Rempliez tous les champs, s'il vous plaît!"
@@ -57,7 +57,7 @@ class Login(Resource):
                     msg = f"welcome, {username}"
                     return {'message': msg, 'userinfo':users[user]}
                 elif username == users[user]['nom'] and password != users[user]['id']:
-                    msg = f"Le mot de passe n'est pas correct"
+                    msg = "Le mot de passe n'est pas correct"
                     return {'message': msg}
             return "Hello stranger"
 
@@ -93,7 +93,7 @@ class CreateAdmin(Resource):
                     }
             msg = "Votre compte admin a bien été créé."
         
-        print(admins)
+        # print(admins)
         dict_to_json(admins, "admins")
 
         return {"massage" : msg}

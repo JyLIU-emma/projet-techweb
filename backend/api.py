@@ -1,10 +1,20 @@
-from flask import Flask, request, render_template, flash, session
+from flask import Flask, request, render_template, flash, session, redirect
+from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Resource, Api
+
+from pathlib import Path
 
 from resources import *
 
 app = Flask(__name__)
 app.secret_key = '23rfqs'   ################# random string
+
+dbpath = str(give_db_path())
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + dbpath
+app.config['SECRET_KEY'] = "random_string"
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+
+db.init_app(app)
 api = Api(app)
 
 

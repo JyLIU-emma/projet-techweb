@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang = "en">
+   <head>
+
+   </head>
+
+   <body>
+    <h3>
+        <a href = "{{ url_for('show_all') }}">Comments - Flask SQLAlchemy example</a>
+    </h3>
+      
+    <hr/>
+    {%- for message in get_flashed_messages() %}
+        {{ message }}
+    {%- endfor %}
+		
+    <h3>
+        Locations <a href = "{{ url_for('resultat') }}">Search a location</a>
+    </h3>
+      
+    <table>
+        <thead>
+        <tr>
+            <th>Geonameid</th>
+            <th>Name </th>
+            <th>Latitude</th>
+            <th>Longitude</th>
+        </tr>
+        </thead>
+         
+        <tbody>
+        {% for location in fr %}
+            <tr>
+                <td>{{ location.geonameid }}</td>
+                <td>{{ location.name }}</td>
+                <td>{{ location.latitude }}</td>
+                <td>{{ location.longitude }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+      
+    </body>
+</html>
