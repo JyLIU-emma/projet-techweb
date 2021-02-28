@@ -119,11 +119,10 @@ class PlaceInfoPage(Resource):
         for i in range(len(info_list)):
             if i == 0:
                 if user_info[i] != db_info[i]:
-                    msg = u"Désolé, le geonameid ne peut pas être changé."
+                    msg = "Désolé, le geonameid ne peut pas être changé."
                     return jsonify({"message":msg})
-            else:
-                if user_info[i] != db_info[i]:
-                    db_info[i] = user_info[i]
+            elif user_info[i] != db_info[i]:
+                db_info[i] = user_info[i]
         
         location_new_version = fr(*db_info)
 

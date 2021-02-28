@@ -32,6 +32,7 @@ api.add_resource(PlaceInfoPage, '/geonames/<geonameid>')  # info de chaque endro
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # app.run(debug=True)
+    app.run(port=2021, host='0.0.0.0')
 
     

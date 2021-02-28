@@ -68,9 +68,7 @@ class CreateAdmin(Resource):
     
     def post(self):
         username = request.form.get('username')
-        print(username)
         userid = request.form.get('id')
-        print(userid)
         password = request.form.get('password')
         password2 = request.form.get('passwordconfirm')
 
@@ -93,6 +91,6 @@ class CreateAdmin(Resource):
             msg = "Votre compte admin a bien été créé."
         
         # print(admins)
-        # dict_to_json(admins, "admins")
+        dict_to_json(admins, "admins")
 
         return jsonify({"massage" : msg})
