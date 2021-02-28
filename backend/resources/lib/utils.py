@@ -2,6 +2,11 @@ from flask import Flask, request, flash, url_for, redirect, render_template
 from flask_sqlalchemy import SQLAlchemy
 from pathlib import Path
 import json
+from passlib.apps import custom_app_context as pwd_context
+#----增加----#
+from flask_login import UserMixin
+from flask_restful import Resource, Api
+import jwt
 
 __all__ = ["load_data", "dict_to_json", 'fr', 'db', 'DB_DATA']
 
@@ -14,6 +19,34 @@ DB_DATA = DATA / "locations.db"
 
 db = SQLAlchemy()
 
+class User(UserMixin, db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.String(32), primary_key=True)
+    username = db.Column(db.String(32))
+    password_hash = db.Column(db.String(64))
+
+    def hash_password(self, password):
+        self.password_hash = pwd_context.encrypt(password)
+    def verify_password(self, password):
+        return pwd_context.verify(password, self.password_hash)
+
+    def generate_auth_token(self, expires_in=600):
+        return jwt.encode(
+            {'id': self.id, 'exp': time.time() + expires_in},
+            app.config['SECRET_KEY'], algorithm='HS256')
+
+    @staticmethod
+    def verify_auth_token(token, app):
+        s = Serializer(app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        # except SignatureExpired:
+        #     return None # valid token, but expired
+        except BadSignature:
+            return None # invalid token
+        user = User.query.get(data['id'])
+        return user
+    
 def load_data(tablename):
     if tablename == "users":
         with USERS_DATA.open() as f:
@@ -26,6 +59,7 @@ def load_data(tablename):
                 data_dico = {}
     return data_dico
 
+'''
 def dict_to_json(dico, filename):
     json_str = json.dumps(dico, indent=4)
     if filename == "admins":
@@ -35,6 +69,7 @@ def dict_to_json(dico, filename):
 
     with filepath.open(mode="w") as jsonfile:
         jsonfile.write(json_str)
+'''
 
 
 class fr(db.Model):
